@@ -13,7 +13,8 @@
             </div>
         </div>
         <div class="col-lg-4 mt-4 mt-lg-0">
-            <h2 class="h5">Створити замовлення</h2>
+            <h1 class="h3">Створити замовлення</h1>
+            <div class="my-3"></div>
             <div class="card">
                 <div class="card-body">
                     <form id="create-order-form" novalidate>
