@@ -28,6 +28,14 @@ class OrderController extends Controller
             $errors['status'] = 'Status must be one of: ' . implode(', ', $allowedStatuses);
         }
 
+        // name validation (required)
+        $name = isset($data['name']) ? trim((string)$data['name']) : '';
+        if ($name === '') {
+            $errors['name'] = 'Name is required';
+        } elseif (mb_strlen($name) > 255) {
+            $errors['name'] = 'Name must be at most 255 characters';
+        }
+
         // price validation
         if (!array_key_exists('price', $data)) {
             $errors['price'] = 'Price is required';
@@ -42,6 +50,7 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
+            'name' => $name,
             'status' => $status,
             'price' => (float) $data['price'],
         ]);

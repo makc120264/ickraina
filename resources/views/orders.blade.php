@@ -19,6 +19,11 @@
                 <div class="card-body">
                     <form id="create-order-form" novalidate>
                         <div class="mb-3">
+                            <label for="name" class="form-label">Ім'я</label>
+                            <input type="text" class="form-control" id="name" name="name" maxlength="255" required>
+                            <div class="invalid-feedback">Вкажіть ім'я (1-255 символів)</div>
+                        </div>
+                        <div class="mb-3">
                             <label for="price" class="form-label">Ціна</label>
                             <input type="number" step="0.01" min="0" class="form-control" id="price" name="price"
                                    required>
@@ -40,7 +45,7 @@
         </div>
     </div>
 
-    <!-- Конфигурация для JS -->
+    <!-- Configuration for JS -->
     <meta name="api-key" content="{{ env('API_KEY', 'secret123') }}">
     <script>
         (function () {
@@ -52,6 +57,7 @@
                 ordersEmpty: document.getElementById('orders-empty'),
                 form: document.getElementById('create-order-form'),
                 messages: document.getElementById('messages'),
+                name: document.getElementById('name'),
                 price: document.getElementById('price'),
                 status: document.getElementById('status')
             };
@@ -82,7 +88,7 @@
                     li.className = 'list-group-item d-flex justify-content-between align-items-center';
                     status = getStatusClass(o.status);
                     li.innerHTML = `<div>
-                                      <div><strong>#${o.id}</strong> — статус: <span class="badge text-bg-${status}">${o.status}</span></div>
+                                      <div><strong>#${o.id}</strong> — ${o.name ? o.name : '(без імені)'} — статус: <span class="badge text-bg-${status}">${o.status}</span></div>
                                       <div class="text-muted small">Створено: ${new Date(o.created_at).toLocaleString()}</div>
                                     </div>
                                     <div class="fw-semibold">${(o.price ?? 0).toFixed(2)} грн</div>
@@ -122,7 +128,7 @@
                         showMessage('danger', msg);
                         return;
                     }
-                    // data.payload.items (без пагинации)
+                    // data.payload.items (without pagination)
                     const items = data && data.payload && data.payload.items ? data.payload.items : [];
                     renderOrders(items);
                 } catch (e) {
@@ -147,7 +153,15 @@
             els.form.addEventListener('submit', async function (ev) {
                 ev.preventDefault();
 
-                // простая валидация
+                // simple validation
+                const nameVal = (els.name.value || '').trim();
+                if (nameVal.length === 0 || nameVal.length > 255) {
+                    els.name.classList.add('is-invalid');
+                    return;
+                } else {
+                    els.name.classList.remove('is-invalid');
+                }
+
                 const priceVal = parseFloat(els.price.value);
                 if (isNaN(priceVal) || priceVal < 0) {
                     els.price.classList.add('is-invalid');
@@ -157,6 +171,7 @@
                 }
 
                 const payload = {
+                    name: nameVal,
                     price: priceVal,
                     status: els.status.value
                 };
@@ -181,7 +196,7 @@
                 }
             });
 
-            // первичная загрузка
+            // initial loading
             document.addEventListener('DOMContentLoaded', loadOrders());
         })();
     </script>
