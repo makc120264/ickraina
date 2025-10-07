@@ -78,6 +78,7 @@ X-API-KEY: secret123
 Content-Type: application/json
 
 {
+  "name": "Test User" 
   "price": 1499.50,
   "status": "new"   // необов'язкове поле за замовчуванням "new"; допустимо: new, processing, completed, cancelled
 }
